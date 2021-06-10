@@ -2,6 +2,10 @@
  <html>
 
  <head>
+     <div>
+         <button>添加实体</button>
+         <button>添加关系</button>
+     </div>
      <style>
          #divid {
              cursor: pointer;
@@ -34,18 +38,18 @@
          function showChart() {
              var data = {
                  "links": [{
-                         "source": "安其拉",
-                         "data": {
+                         "source": "安其拉", // 开始节点
+                         "data": { //关系提示数据
                              "rzs": "1000万美元"
                          },
-                         "target": "企业",
-                         "relation": "投资",
-                         "sourceImg": "http://mail.tom.com/error/i2.gif",
-                         "targetImg": "",
-                         "sourceColor": "#F4793B",
-                         "targetColor": "#0084ff",
-                         "sourceRadius": "30",
-                         "targetRadius": "35",
+                         "target": "企业", // 结束节点
+                         "relation": "投资", //关系名称
+                         "sourceImg": "http://mail.tom.com/error/i2.gif", //开始节点头像
+                         "targetImg": "", //结束节点头像
+                         "sourceColor": "#F4793B", // 开始节点颜色
+                         "targetColor": "#0084ff", // 结束节点颜色
+                         "sourceRadius": "30", // 开始节点球半径
+                         "targetRadius": "35", // 结束节点球半径
                      },
                      {
                          "source": "安其拉",
@@ -154,14 +158,17 @@
              var lineColor = options.lineColor; //连线颜色
              var examplesFontColor = options.examplesFontColor; //关系示例字体颜色
 
-             var width = window.innerWidth; //画布宽
-             var height = window.innerHeight; //画布高
-             var svgChart = d3.select("svg");
-             svgChart.remove();
+             //  var width = window.innerWidth; //画布宽
+             //  var height = window.innerHeight; //画布高
+             var width = 600; //画布宽
+             var height = 450; //画布高
+
+             var svgChart = d3.select("svg"); //选择文档中的svg元素
+             svgChart.remove(); //删除svgChart元素
 
              var tip = $(".tooltip");
              if (tip.length > 0) {
-                 tip.remove();
+                 tip.remove(); //删除tip元素
              }
 
 
@@ -333,37 +340,47 @@
                  }
              }
              //D3力导向布局
-             var force = d3.layout.force()
-                 .nodes(nodes)
-                 .links(links)
-                 .size([width, height])
-                 .linkDistance(200)
-                 .charge(-1500)
+             var force = d3.layout.force() // 生成力导向图的布局函数
+                 .nodes(nodes) // 指定节点数组
+                 .links(links) // 指定连线数组
+                 .size([width, height]) // 指定作用域范围
+                 .linkDistance(200) // 指定连线长度
+                 .charge(-1500) // 相互之间的作用力
                  .start();
              // 全图缩放器
              var zoom = d3.behavior.zoom()
-                 .scaleExtent([0.25, 2])
+                 .scaleExtent([0.25, 2]) // 设置最大缩放比例
                  .on('zoom', zoomFn);
-             var svg = d3.select("#" + divid).append("svg")
-                 .attr("width", width)
-                 .attr("height", height)
+
+             //在 body 里添加一个 SVG 画布 
+             var svg = d3.select("#" + divid).append("svg") //添加一个svg元素
+                 .attr("width", width) //设定画布宽度
+                 .attr("height", height) //设定画布高度
                  .attr("style", "background-color:" + backgroundColor)
-                 .call(zoom)
+                 .call(zoom) //缩放
                  .on('dblclick.zoom', null);
+             //画布周边的空白
+             //  var padding = {
+             //      left: 130,
+             //      right: 30,
+             //      top: 20,
+             //      bottom: 20
+             //  };
+
              // 缩放层（位置必须在 container 之前）
-             var zoomOverlay = svg.append('rect')
-                 .attr('width', width)
-                 .attr('height', height)
+             var zoomOverlay = svg.append('rect') //在 SVG 中，矩形的元素标签是 rect  添加足够数量的矩形元素
+                 .attr('width', width) //设定画布宽度
+                 .attr('height', height) //设定画布高度
                  .style('fill', 'none')
-                 .style('pointer-events', 'all');
+                 .style('pointer-events', 'all'); // 鼠标事件
              var container = svg.append('g')
                  .attr('transform', 'scale(' + 0.6 + ')')
                  .attr('class', 'container');
              // 根据分类进行筛选
              if (options.showExamples) {
-                 var examples = svg.selectAll(".examples")
-                     .data(relationColor)
-                     .enter()
+                 var examples = svg.selectAll(".examples") //选择svg中的所有.examples元素
+                     .data(relationColor) //绑定对象
+                     .enter() //添加数据
                      .append("svg:g")
                      .attr("fill-opacity", function (d) {
                          for (var i = 0; i < dataFilter.length; i++) {
@@ -373,7 +390,7 @@
                          }
                          return 1;
                      })
-                     .on("click", function (d) {
+                     .on("click", function (d) { // 点击事件
                          for (var i = 0; i < dataFilter.length; i++) {
                              if (dataFilter[i].relation == d.relation) {
                                  if (dataFilter[i].isShow == "true") {
@@ -402,7 +419,7 @@
                              return d.lineColor;
                          }
                      })
-                     .style("stroke-width", 2.5);
+                     .style("stroke-width", 2.5); // 边框粗细
                  examples.append("svg:text")
                      .style("font-size", "14px")
                      .style("fill", examplesFontColor)
@@ -415,7 +432,7 @@
                      .attr("y", function (d) {
                          return d.y + 5;
                      })
-                     .attr('text-anchor', "middle")
+                     .attr('text-anchor', "middle") // 节点名称放在圆圈中间位置
                      .text(function (d) {
                          if (d.relation.length > 3) {
                              return d.relation.substring(0, 3) + "...";
@@ -447,22 +464,22 @@
                  container.attr('transform', 'translate(' + translate + ')scale(' + scale * 0.6 + ')');
              }
              //设置连接线             
-             var edges_path = container.selectAll(".edgepath")
-                 .data(links)
-                 .enter()
+             var edges_path = container.selectAll(".edgepath") //选择container中的所有.edgepath元素
+                 .data(links) //绑定数组
+                 .enter() //指定选择集的enter部分
                  .append("path")
                  .attr("marker-end", function (d, i) {
                      var arrowMarker = container.append("marker")
-                         .attr("id", "arrow" + i)
-                         .attr("markerUnits", "userSpaceOnUse")
-                         .attr("markerWidth", "16")
-                         .attr("markerHeight", "15")
-                         .attr("viewBox", "0 0 12 12")
-                         .attr("refX", 9)
-                         .attr("refY", 6)
-                         .attr("orient", "auto")
+                         .attr("id", "arrow" + i) // 设置id，用于连线文字
+                         .attr("markerUnits", "userSpaceOnUse") // 设置为userSpaceOnUse箭头不受连接元素的影响
+                         .attr("markerWidth", "16") // viewport
+                         .attr("markerHeight", "15") // viewport
+                         .attr("viewBox", "0 0 12 12") // 实际大小，会自动缩放填充viewport
+                         .attr("refX", 9) // 偏离圆心距离
+                         .attr("refY", 6) // 偏离圆心距离
+                         .attr("orient", "auto") // 绘制方向，可设定为：auto(自动确认方向)和 角度值
                          .append("svg:path")
-                         .attr("d", "M2,2 L10,6 L2,10 L6,6 L2,2")
+                         .attr("d", "M2,2 L10,6 L2,10 L6,6 L2,2") // d: 路径描述，贝塞尔曲线
                          .attr("fill", function () {
                              return d.lineColor = "" ? lineColor : d.lineColor;
                          });
@@ -476,7 +493,7 @@
                          return d.lineColor;
                      }
                  })
-                 .style("stroke-width", 1.5)
+                 .style("stroke-width", 1.5) // 边框粗细
                  .on("mouseover", function (d) {
                      console.log('放到连接线');
                      // 设置参股或是融资信息
@@ -494,7 +511,7 @@
                          }
                          return 0;
                      })
-                     edges_path.style("stroke-width", function (edge) {
+                     edges_path.style("stroke-width", function (edge) { // 边框粗细
                          if (edge === d) {
                              return 4;
                          }
@@ -504,25 +521,27 @@
                  .on("mouseout", function (d, i) {
                      //显示连线上的文字
                      edges_text.style("fill-opacity", 1);
-                     edges_path.style("stroke-width", 1.5);
+                     edges_path.style("stroke-width", 1.5); // 边框粗细
                      // 隐藏提示信息
                      tooltip.style("opacity", 0.0);
                  });
 
 
              //边上的文字（人物之间的关系），连接线            
-             var edges_text = container.selectAll(".linetext")
-                 .data(links)
-                 .enter()
-                 .append("svg:g")
+             var edges_text = container.selectAll(".linetext") //选择container中的所有.linetext元素
+                 .data(links) //绑定数组
+                 .enter() //指定选择集的enter部分
+                 .append("svg:g") //添加足够数量的svg:g元素
                  .attr("class", "linetext")
                  .attr("fill-opacity", 1);
              edges_text.append("svg:text")
                  .style("font-size", (12 + "px"))
                  .style("font-family", lineFontType)
-                 .style("fill", "#000000")
+                 .style("fill", "#000000") //初始颜色为黑色
+                 //  .transition() //启动过渡
+                 //  .attr("fill", "steelblue") //终止颜色为铁蓝色
                  .attr("y", ".33em")
-                 .attr('text-anchor', "middle")
+                 .attr('text-anchor', "middle") // 节点名称放在圆圈中间位置
                  .text(function (d) {
                      return d.relation;
                  });
@@ -541,11 +560,11 @@
                  .style('fill', 'none');
 
              // 节点设置，包含圆形图片节点（人物头像）
-             var circle = container.selectAll("circle")
-                 .data(nodes)
-                 .enter()
-                 .append("circle")
-                 .style("stroke", function (d) {
+             var circle = container.selectAll("circle") //选择container中的所有circle元素
+                 .data(nodes) //绑定数组
+                 .enter() //指定选择集的enter部分
+                 .append("circle") // 创建圆
+                 .style("stroke", function (d) { // 边框颜色
                      if (d.color == "") {
                          return "#EE8262";
                      } else if (d.color == '#0084ff') {
@@ -555,7 +574,7 @@
                      }
                      return d.color;
                  })
-                 .style("stroke-width", "2px")
+                 .style("stroke-width", "2px") // 边框粗细
                  .attr("r", function (d) {
                      return d.radius;
                  })
@@ -581,10 +600,18 @@
                              .attr("width", d.radius * 2)
                              .attr("height", d.radius * 2)
                              .attr("xlink:href", d.image)
-
+                         //  edgesText.append('textPath') // 设置文字内容
+                         //      .attr('xlink:href', (d, i) => {
+                         //          return i && '#edgepath' + i;
+                         //      }) // 文字布置在对应id的连线上
                          return "url(#catpattern" + i + ")";
                      }
 
+                 })
+                 .on("click", function (d, i) {
+                     //在这里添加交互内容
+                     console.log('12555');
+                     alert("I am an alert box!!")
                  })
                  .on("mouseover", function (d, i) {
                      console.log('放到人物头像');
@@ -635,27 +662,27 @@
                      tooltip.style("opacity", 0.0);
 
                  })
-                 .call(force.drag);
+                 .call(force.drag); // 拖拽单个节点带动整个图
 
-             var tooltip = d3.select("body").append("div")
+             var tooltip = d3.select("body").append("div") //选择文档中的body元素
                  .attr("class", "tooltip")
                  .attr("opacity", 0.0);
 
              // 节点文字设置
-             var nodes_text = container.selectAll(".nodetext")
-                 .data(nodes)
-                 .enter()
-                 .append("text")
+             var nodes_text = container.selectAll(".nodetext") //选择container中的所有.nodetext元素
+                 .data(nodes) //绑定数组
+                 .enter() //指定选择集的enter部分
+                 .append("text") // 为每一条连线创建文字区域
                  .style("font-size", (nodesFontSize + "px"))
-                 .style("fill", "#ffffff")
+                 .style("fill", "#ffffff") // 填充颜色viewport：可视区域
                  .style("font-family", nodesFontType)
                  .attr('x', function (d) {
                      var name = d.name;
                      //如果小于四个字符，不换行
                      if (name.length < 4) {
                          d3.select(this).append('tspan')
-                             .attr("dx", -nodesFontSize * (name.length / 2))
-                             .attr("dy", 5)
+                             .attr("dx", -nodesFontSize * (name.length / 2)) // 偏移量
+                             .attr("dy", 5) // 偏移量
                              .text(function () {
                                  return name;
                              });
@@ -664,15 +691,15 @@
                          var bot = d.name.substring(3, name.length);
 
                          d3.select(this).append('tspan')
-                             .attr("dx", -nodesFontSize * 1.5)
-                             .attr("dy", -nodesFontSize * 0.5)
+                             .attr("dx", -nodesFontSize * 1.5) // 偏移量
+                             .attr("dy", -nodesFontSize * 0.5) // 偏移量
                              .text(function () {
                                  return top;
                              });
 
                          d3.select(this).append('tspan')
-                             .attr("dx", -(nodesFontSize * name.length / 2))
-                             .attr("dy", nodesFontSize)
+                             .attr("dx", -(nodesFontSize * name.length / 2)) // 偏移量
+                             .attr("dy", nodesFontSize) // 偏移量
                              .text(function () {
                                  return bot;
                              });
@@ -682,23 +709,23 @@
                          var bot = d.name.substring(6, name.length);
 
                          d3.select(this).append('tspan')
-                             .attr("dx", -nodesFontSize * 1.5)
-                             .attr("dy", -nodesFontSize * 0.5)
+                             .attr("dx", -nodesFontSize * 1.5) // 偏移量
+                             .attr("dy", -nodesFontSize * 0.5) // 偏移量
                              .text(function () {
                                  return top;
                              });
 
 
                          d3.select(this).append('tspan')
-                             .attr("dx", -nodesFontSize * 3)
-                             .attr("dy", nodesFontSize)
+                             .attr("dx", -nodesFontSize * 3) // 偏移量
+                             .attr("dy", nodesFontSize) // 偏移量
                              .text(function () {
                                  return mid;
                              });
 
                          d3.select(this).append('tspan')
-                             .attr("dx", -nodesFontSize * 2)
-                             .attr("dy", nodesFontSize)
+                             .attr("dx", -nodesFontSize * 2) // 偏移量
+                             .attr("dy", nodesFontSize) // 偏移量
                              .text(function () {
                                  return "...";
                              });
@@ -757,7 +784,7 @@
                      tooltip.style("opacity", 0.0);
 
                  })
-                 .call(force.drag);
+                 .call(force.drag); // 拖拽单个节点带动整个图
              //   拖动节点
              var drag = force.drag()
                  .on("dragstart", function (d, i) {
