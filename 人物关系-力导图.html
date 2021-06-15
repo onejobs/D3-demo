@@ -2,6 +2,36 @@
 <html>
 
 <head>
+    <div slot="right" @contextmenu.prevent class="demo-split-pane" style="width: 100%;height: 100%;">
+        <div style="overflow: auto;width: 100%;height: calc(100% - 40px);position: relative;">
+            <div id="treeContainer" style="width: 100%;height: 100%;position: relative;margin: auto;">
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="flow-node-menu" id="nodeMenu" v-show="nodeMenuFlag">
+        <div class="prop-menu-item" @click="propClick">
+            <div class="pull-left">
+                <i class=" flow go-end"></i>
+            </div>
+            <div class="pull-left item_label">
+                <label>属性</label>
+            </div>
+        </div>
+        <div class="prop-menu-item" @click="removeNodeClick">
+            <div class="pull-left">
+                <i class=" flow go-end"></i>
+            </div>
+            <div class="pull-left item_label">
+                <label>删除</label>
+            </div>
+        </div>
+    </div>
+
+
     <div>
         <button>添加实体</button>
         <button>添加关系</button>
@@ -25,6 +55,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+
+    <!-- <script src="./js/smartMenu.js"></script>
+    <script src="./fun.js"></script>
+    <link rel="stylesheet" href="./css/smartMenu.css"> -->
+
 </head>
 
 <body>
@@ -642,9 +678,32 @@
 
                 })
                 .on("click", function (d, i) {
-                    //在这里添加交互内容
-                    console.log('12555');
-                    alert("I am an alert box!!")
+                    // //在这里添加交互内容
+                    // console.log('12555');
+                    // alert("I am an alert box!!")
+                    // ---------------------------------
+                    //左键盘点击 则隐藏右键菜单
+                    this.vueMethods.hideNodeMenu && this.vueMethods.hideNodeMenu();
+                    //隐藏以前相应的选中状态
+                    this.svgObj.selectAll("rect")
+                        .attr("fill-opacity", 0)
+                        .attr("stroke-opacity", 0);
+                    //将当前节点设置为选中状态
+                    window.d3.select("#" + "rect_" + d.id)
+                        .attr("fill-opacity", 1)
+                        .attr("stroke-opacity", 1);
+                    console.log(d, "====");
+
+                })
+                .on("contextmenu", function (d, i) {
+                    //在这里右键添加交互内容
+                    // e.preventDefault();
+                    // 执行代码块
+                    // alert(d.name)
+                    // this.showNodeMenu(d);
+                    console.log(d.name, "33")
+                    console.log(i, "2222")
+                    // console.log(this, "11111")
                 })
                 .on("mouseover", function (d, i) {
                     console.log('放到人物头像');
@@ -696,6 +755,8 @@
 
                 })
                 .call(force.drag); // 拖拽单个节点带动整个图
+
+
 
             var tooltip = d3.select("body").append("div") //选择文档中的body元素
                 .attr("class", "tooltip")
@@ -764,6 +825,13 @@
                             });
                     }
                 })
+                // 右键关系文字
+                .on("contextmenu", d => {
+                    // this.showNodeMenu(d);
+                    console.log(d.name, 4444);
+                    console.log(this, '右键关系文字');
+                })
+
                 .on("mouseover", function (d, i) {
                     console.log('放到关系文字');
                     //影藏其它连线上文字
@@ -957,6 +1025,7 @@
                 });
             });
         }
+
 
         // 分配編號
         function setLinkNumber(group) {
