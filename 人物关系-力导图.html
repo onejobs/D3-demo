@@ -2,6 +2,38 @@
 <html>
 
 <head>
+    <!--自定义右键菜单html代码-->
+    <div id="menu">
+        <div class="menu">查看信息卡片</div>
+        <div class="menu">添加关系</div>
+        <div class="menu">添加属性</div>
+        <div class="menu">功能4</div>
+        <div class="menu">功能5</div>
+    </div>
+    <style>
+        /*css代码*/
+        #menu {
+            width: 0;
+            /*设置为0 隐藏自定义菜单*/
+            height: 125px;
+            overflow: hidden;
+            /*隐藏溢出的元素*/
+            box-shadow: 0 1px 1px #888, 1px 0 1px #ccc;
+            position: absolute;
+            /*自定义菜单相对与body元素进行定位*/
+        }
+
+        .menu {
+            width: 130px;
+            height: 25px;
+            line-height: 25px;
+            padding: 0 10px;
+        }
+    </style>
+
+
+
+
     <div slot="right" @contextmenu.prevent class="demo-split-pane" style="width: 100%;height: 100%;">
         <div style="overflow: auto;width: 100%;height: calc(100% - 40px);position: relative;">
             <div id="treeContainer" style="width: 100%;height: 100%;position: relative;margin: auto;">
@@ -677,7 +709,13 @@
                     }
 
                 })
-                .on("click", function (d, i) {
+                .on("click", function (e, d, i) {
+                    //用户触发click事件就可以关闭了，因为绑定在window上，按事件冒泡处理，不会影响菜单的功能
+                    document.querySelector('#menu').style.height = 0;
+
+
+
+
                     // //在这里添加交互内容
                     // console.log('12555');
                     // alert("I am an alert box!!")
@@ -696,12 +734,32 @@
 
                 })
                 .on("contextmenu", function (d, i) {
+                    console.log(d);
+                    console.log(i);
+                    //取消默认的浏览器自带右键 很重要！！
+                    // e.preventDefault();
+
+                    //获取我们自定义的右键菜单
+                    var menu = document.querySelector("#menu");
+
+                    //根据事件对象中鼠标点击的位置，进行定位
+                    // menu.style.left = e.clientX + 'px';
+                    menu.style.left = d.px + 'px';
+                    console.log(menu.style.left, "左");
+                    // menu.style.top = e.clientY + 'px';
+                    menu.style.top = d.py + 'px';
+                    console.log(menu.style.top, "左");
+
+                    //改变自定义菜单的宽，让它显示出来
+                    menu.style.width = '125px';
+
+
                     //在这里右键添加交互内容
                     // e.preventDefault();
                     // 执行代码块
                     // alert(d.name)
                     // this.showNodeMenu(d);
-                    console.log(d.name, "33")
+                    console.log(d, "33")
                     console.log(i, "2222")
                     // console.log(this, "11111")
                 })
@@ -1048,7 +1106,16 @@
             }
 
         }
+        window.oncontextmenu = function (e) {
+            //取消默认的浏览器自带右键 很重要！！
+            e.preventDefault();
+        };
     </script>
-
+    <!-- <script>
+        window.oncontextmenu = function (e) {
+            //取消默认的浏览器自带右键 很重要！！
+            e.preventDefault();
+        };
+    </script> -->
 
 </html>
