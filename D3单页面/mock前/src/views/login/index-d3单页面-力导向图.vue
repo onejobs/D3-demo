@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>vue d3 力导向图</h1>
+    <h1>Knowledge Graph</h1>
     <svg width="960" height="600"></svg>
   </div>
 </template>
@@ -154,3 +154,4 @@ svg {
   stroke-width: 1.5px;
 }
 </style>
+ 
