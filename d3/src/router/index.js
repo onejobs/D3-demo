@@ -6,10 +6,6 @@ import Login from '@/views/login'
 import Detail from '@/views/detail'
 import Test from '@/views/test'
 Vue.use(VueRouter)
-
-
-
-
 const router = new VueRouter({
   routes: [{
       path: '/login',

@@ -11,9 +11,11 @@ export default {
     return {};
   },
   mounted() {
-    let svg = d3.select("svg");
-    let width = +svg.attr("width");
-    let height = +svg.attr("height");
+    let svgChart = d3.select("svg");
+    // svg.remove();
+    let width = +svgChart.attr("width");
+    console.log(width);
+    let height = +svgChart.attr("height");
 
     let nodesData = [
       { name: "Lillian", sex: "F" },
@@ -63,13 +65,14 @@ export default {
       { source: "Mauer", target: "Jessie", type: "E" },
     ];
 
+    // 节点之间分隔的间隔大一点，需要修改的地方
     let simulation = d3.forceSimulation().nodes(nodesData);
 
     simulation
       .force("charge_force", d3.forceManyBody())
-      .force("center_force", d3.forceCenter(width / 2, height / 2));
+      .force("center_force", d3.forceCenter(width / 4, height / 4));
 
-    let node = svg
+    let node = svgChart
       .append("g")
       .attr("class", "nodes")
       .selectAll("circle")
@@ -111,7 +114,7 @@ export default {
 
     simulation.force("links", linkForce);
 
-    let link = svg
+    let link = svgChart
       .append("g")
       .attr("class", "links")
       .selectAll("line")

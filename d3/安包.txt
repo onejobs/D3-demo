@@ -1,0 +1,21 @@
+npm install sass-loader -D
+npm install node-sass -D
+cnpm install node-sass -D
+cnpm install core-js@2
+
+安装jquery
+cnpm install jquery --save
+
+npm install d3
+npm install dagre-d3
+npm i jquery
+
+
+第二批
+cnpm install d3
+cnpm install jquery --save
+npm install --save core-js/modules/es6.function.name d3
+npm install core-js@2
+
+npm install --save d3
+npm install --save jquery
